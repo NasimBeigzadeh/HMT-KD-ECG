@@ -23,15 +23,14 @@ model:
   teachers:
     mobilenet:
       enabled: true
-      path: weights/mobilenet_teacher.pt
+
 
     resnet_senet:
       enabled: true
-      path: weights/resnet18_senet_teacher.pt
 
     teacher_assistant:
       enabled: true
-      path: weights/teacher_assistant.pt
+     
 
 
   student:
