@@ -1,87 +1,189 @@
-# HMT-KD-ECG
+# HMT-KD: Hierarchical Multi-Teacher Knowledge Distillation for Lightweight ECG Classification
 
-## Hierarchical Multi-Teacher Knowledge Distillation Framework for Lightweight ECG Classification
+Official implementation of **HMT-KD**, a hierarchical multi-teacher knowledge distillation framework for accurate and lightweight ECG classification using response-based and feature-based knowledge transfer.
 
+## Overview
 
-This repository contains the official implementation of the proposed **Hierarchical Multi-Teacher Knowledge Distillation (HMT-KD)** framework for lightweight and efficient ECG classification.
+Automated electrocardiogram (ECG) classification plays an important role in intelligent healthcare systems, particularly in wearable and resource-constrained environments where accurate diagnosis must be achieved with limited computational and memory resources.
 
-The increasing demand for real-time healthcare applications requires deep learning models that can achieve high diagnostic performance while maintaining low computational complexity. Although deep neural networks provide powerful feature extraction capabilities for ECG analysis, their large number of parameters and high computational requirements limit their deployment on resource-constrained and wearable devices.
+Although deep neural networks provide powerful representation learning capabilities for ECG analysis, their large number of parameters and high computational complexity restrict their deployment on edge devices and real-time healthcare applications.
 
-To address this challenge, we propose a hierarchical multi-teacher knowledge distillation framework that transfers knowledge from multiple powerful teacher networks into a compact student model. The proposed framework combines complementary knowledge sources from different architectures through both response-based and feature-based knowledge distillation strategies.
+In this work, we propose **HMT-KD (Hierarchical Multi-Teacher Knowledge Distillation)**, a lightweight framework that transfers complementary knowledge from multiple teacher networks into a compact student model.
 
-The HMT-KD framework employs two primary teacher networks, including **ResNet-18 with SENet attention mechanism** and **MobileNetV2**, to extract rich ECG representations. A **Teacher Assistant (TA)** network is introduced as an intermediate learning bridge to improve the knowledge transfer process between high-capacity teachers and the lightweight student model.
+The proposed framework employs two high-capacity teacher networks:
 
-The student network is designed as an efficient CNN architecture incorporating depthwise separable convolutions, residual learning blocks, and attention mechanisms to achieve an effective balance between classification accuracy and computational efficiency.
+- **ResNet-18 with SENet attention mechanism**
+- **MobileNetV2**
 
-The proposed framework is evaluated on ECG image representations generated from benchmark ECG datasets, including **PTB-XL** and **Chapman ECG datasets**. Experimental results demonstrate that the proposed approach can significantly reduce model complexity while preserving competitive diagnostic performance, making it suitable for real-time and low-resource healthcare applications.
+These teacher networks are optimized to extract rich ECG representations. A lightweight **Teacher Assistant (TA)** network is then trained using knowledge distillation from both teachers, providing an intermediate representation bridge between the complex teacher models and the final lightweight student.
 
+The final student model is trained using two parallel knowledge transfer pathways:
 
-## Framework Overview
+1. **Response-based Knowledge Distillation**
 
-The overall architecture of the proposed HMT-KD framework is illustrated below:
+   The student learns from the soft prediction outputs of ResNet18-SENet, MobileNetV2, and the Teacher Assistant.
+
+2. **Feature-based Knowledge Distillation**
+
+   Intermediate feature representations extracted from the Teacher Assistant are transferred to the student network to improve feature learning capability.
+
+The student architecture is designed using efficient deep learning components, including **depthwise separable convolutions**, **residual learning blocks**, and **attention mechanisms**, enabling high diagnostic performance with a significantly reduced model size.
+
+The proposed HMT-KD framework was evaluated on the **PTB-XL** and **Chapman/Shaoxing 12-lead ECG datasets**.
+
+With only **101,600 trainable parameters**, the proposed student model achieves:
+
+| Dataset | Accuracy | AUROC |
+|---------|----------|-------|
+| PTB-XL | 85.45% | 96.53% |
+| Chapman | 94.42% | 98.86% |
+
+Compared with the ResNet18 + SENet teacher network containing **11.2M parameters**, the proposed student model reduces the parameter size by approximately **110×**, corresponding to more than **99% reduction in model complexity** while maintaining competitive classification performance.
+
+These results demonstrate the effectiveness of HMT-KD for developing lightweight ECG classification models suitable for wearable healthcare systems and real-time IoMT applications.
+
 
 <p align="center">
-<img src="PictureHMT-KD.png" width="850">
+  <img src="PictureHMT-KD.png"
+       alt="HMT-KD Framework"
+       width="900">
 </p>
 
 **Fig. 6.** A schematic overview of the proposed Hierarchical Multi-Teacher Knowledge Distillation (HMT-KD) framework, integrating response-based and feature-based pathways. The response-based KD exploits the outputs of ResNet-18 with SENet, MobileNetV2, and the Teacher Assistant, while the feature-based KD transfers intermediate representations from the TA to the student.
 
 
-## Main Components
+---
 
-- **Teacher 1:** ResNet-18 with SENet attention module  
-- **Teacher 2:** MobileNetV2  
-- **Teacher Assistant:** Intermediate knowledge transfer network  
-- **Student Model:** Lightweight CNN optimized for ECG classification  
+# Dataset
 
+The proposed HMT-KD framework was trained and evaluated using two publicly available benchmark ECG datasets:
 
-## Knowledge Distillation Strategy
-
-The proposed framework performs knowledge transfer through two parallel pathways:
-
-- **Response-based Knowledge Distillation:**  
-  The student learns from the soft prediction outputs of multiple teachers.
-
-- **Feature-based Knowledge Distillation:**  
-  Intermediate feature representations extracted from the Teacher Assistant are transferred to guide the student model.
+1. Chapman/Shaoxing 12-lead ECG Database  
+2. PTB-XL ECG Dataset  
 
 
-## Repository Structure
+---
+
+# 1. Chapman/Shaoxing 12-lead ECG Database
+
+The Chapman/Shaoxing dataset contains **12-lead ECG recordings** sampled at **500 Hz** with a duration of **10 seconds**.
+
+Four diagnostic classes were used in this study:
 
 
-## Models
-
-The repository includes implementations of:
-
-- MobileNetV2 teacher network
-- ResNet18-SENet teacher network
-- Teacher Assistant network
-- Lightweight student CNN network
+| Class | Description |
+|------|-------------|
+| SR | Normal Sinus Rhythm |
+| SB | Sinus Bradycardia |
+| GSVT | General Supraventricular Tachycardia |
+| AFIB | Atrial Fibrillation |
 
 
-## Datasets
+### Dataset source
 
-The framework supports ECG image classification using:
+The dataset is publicly available through Kaggle:
 
-- PTB-XL ECG dataset
-- Chapman ECG dataset
+[Chapman/Shaoxing 12-lead ECG Database — Kaggle](https://www.kaggle.com/datasets/erarayamorenzomuten/chapmanshaoxing-12lead-ecg-database)
 
 
-## Training
+---
 
-The complete training pipeline is implemented using PyTorch.
+# 2. PTB-XL ECG Dataset
 
-Example:
+PTB-XL is a large-scale publicly available 12-lead ECG dataset containing clinical ECG recordings annotated by expert cardiologists.
 
-```bash
-python src/training/train.py
-## Results
+In this study, the **superdiagnostic classification scheme** was adopted.
 
-The proposed HMT-KD framework was evaluated on the **PTB-XL ECG dataset** by comparing the performance of the teacher networks, Teacher Assistant (TA), and the lightweight student model with and without knowledge distillation.
+Five diagnostic classes were used:
 
-The results demonstrate that the proposed knowledge distillation strategy enables the lightweight student model to achieve competitive diagnostic performance while significantly reducing model complexity.
 
-### Performance Comparison on PTB-XL Dataset
+| Class | Description |
+|------|-------------|
+| NORM | Normal ECG |
+| MI | Myocardial Infarction |
+| STTC | ST/T Change |
+| CD | Conduction Disturbance |
+| HYP | Hypertrophy |
+
+
+### Dataset source
+
+The PTB-XL dataset is publicly available through PhysioNet:
+
+[PTB-XL — PhysioNet](https://physionet.org/content/ptb-xl/1.0.3/)
+
+
+---
+
+# Experimental Setup
+
+All experiments were implemented using **PyTorch** and conducted on the **Kaggle GPU platform**.
+
+## Environment
+
+| Component | Configuration |
+|-----------|---------------|
+| Python | 3.12.13 |
+| PyTorch | 2.10.0 |
+| CUDA | 12.8 |
+| GPU | 2 × NVIDIA Tesla T4 |
+| GPU Memory | 15 GB per GPU |
+| Input Resolution | 300 × 300 |
+| Epochs | 65 |
+| Batch Size | 128 |
+| Optimizer | AdamW |
+| Learning Rate | 4 × 10⁻⁴ |
+| Weight Decay | 1 × 10⁻⁵ |
+| Temperature | 2.0 |
+| KD Weight (α) | 0.7 |
+| Feature KD Weight (β) | 0.2 |
+
+
+---
+
+# Training Strategy
+
+The training procedure consists of three main stages:
+
+1. **Teacher Network Training**
+
+   ResNet18-SENet and MobileNetV2 are optimized as high-capacity teacher models.
+
+2. **Teacher Assistant Knowledge Transfer**
+
+   The Teacher Assistant learns from the combined soft predictions of both teacher networks.
+
+3. **Student Knowledge Distillation**
+
+   The lightweight student model is trained using hierarchical supervision from:
+
+   - MobileNetV2
+   - ResNet18-SENet
+   - Teacher Assistant
+
+   through response-based and feature-based distillation pathways.
+
+
+---
+
+# Evaluation Metrics
+
+The proposed framework is evaluated using the following standard classification metrics:
+
+- Accuracy
+- Recall (Sensitivity)
+- Precision
+- Specificity
+- F1-Score
+- AUROC
+
+
+---
+
+# Results
+
+## Performance Comparison on PTB-XL Dataset
+
 
 | Model | Precision | Recall | F1-score | Accuracy | Specificity | AUROC | Parameters |
 |------|-----------|--------|----------|----------|-------------|-------|------------|
@@ -92,10 +194,26 @@ The results demonstrate that the proposed knowledge distillation strategy enable
 | Student (With HMT-KD) | 0.8074 | 0.7433 | 0.7622 | 0.8545 | 0.9569 | 0.9653 | 101,600 |
 
 
-The proposed HMT-KD framework significantly improves the performance of the lightweight student model. Without knowledge distillation, the student network achieves an accuracy of **74.24%** and an AUROC of **88.98%**. After applying the proposed hierarchical multi-teacher knowledge transfer strategy, the student model reaches **85.45% accuracy** and **96.53% AUROC**, demonstrating the effectiveness of both response-based and feature-based knowledge transfer pathways.
+The results demonstrate that HMT-KD significantly improves the performance of the lightweight student model.
 
-Moreover, the proposed student model contains only **101,600 parameters**, which represents a reduction of approximately **110× compared with the ResNet18 + SENet teacher network (11,220,853 parameters)** while maintaining comparable classification performance.
+Without knowledge distillation, the student network achieves:
 
-Compared with the ResNet18 + SENet teacher, the HMT-KD student reduces the model size by approximately **99.1%**, making it suitable for deployment on resource-constrained devices such as wearable healthcare systems and real-time ECG monitoring platforms.
+- Accuracy: **74.24%**
+- AUROC: **88.98%**
 
-The experimental results confirm that HMT-KD successfully achieves an optimal balance between diagnostic accuracy and computational efficiency, enabling lightweight ECG classification without significant loss of performance.
+After applying the proposed hierarchical multi-teacher knowledge transfer strategy, the student model achieves:
+
+- Accuracy: **85.45%**
+- AUROC: **96.53%**
+
+
+The proposed student network contains only **101,600 parameters**, while the ResNet18 + SENet teacher contains **11,220,853 parameters**.
+
+Therefore, HMT-KD achieves:
+
+- Approximately **110× parameter reduction**
+- More than **99% reduction in model complexity**
+
+while maintaining comparable diagnostic performance.
+
+These results confirm that the proposed HMT-KD framework provides an effective solution for lightweight, accurate, and real-time ECG classification in resource-constrained healthcare applications.
