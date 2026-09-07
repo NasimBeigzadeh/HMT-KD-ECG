@@ -21,7 +21,7 @@ The proposed framework is evaluated on ECG image representations generated from 
 The overall architecture of the proposed HMT-KD framework is illustrated below:
 
 <p align="center">
-<img src="figures/PictureHMT-KD.png" width="850">
+<img src="PictureHMT-KD.png" width="850">
 </p>
 
 **Fig. 6.** A schematic overview of the proposed Hierarchical Multi-Teacher Knowledge Distillation (HMT-KD) framework, integrating response-based and feature-based pathways. The response-based KD exploits the outputs of ResNet-18 with SENet, MobileNetV2, and the Teacher Assistant, while the feature-based KD transfers intermediate representations from the TA to the student.
