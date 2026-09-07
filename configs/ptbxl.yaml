@@ -1,1 +1,84 @@
 
+dataset:
+  name: PTB-XL
+  root: data/PTB-XL
+  train_dir: data/PTB-XL/train
+  valid_dir: data/PTB-XL/valid
+  test_dir: data/PTB-XL/test
+
+  num_classes: 5
+
+  classes:
+    - NORM
+    - MI
+    - STTC
+    - CD
+    - HYP
+
+
+input:
+  image_size: [300, 300]
+  channels: 3
+
+
+dataloader:
+  batch_size: 128
+  num_workers: 4
+  shuffle_train: true
+  shuffle_valid: false
+  shuffle_test: false
+
+
+training:
+  epochs: 65
+
+  optimizer:
+    name: AdamW
+    lr: 0.0004
+    weight_decay: 0.00001
+
+  scheduler:
+    name: ReduceLROnPlateau
+    mode: min
+    factor: 0.85
+    patience: 3
+
+
+knowledge_distillation:
+  temperature: 2.0
+
+  alpha: 0.7
+
+  beta: 0.2
+
+  teacher_weights:
+    mobilenet: 0.9538
+    resnet_senet: 0.9518
+    teacher_assistant: 0.9565
+
+
+models:
+
+  teacher1:
+    name: MobileNetV2
+  
+
+
+  teacher2:
+    name: ResNet18_SENet
+ 
+
+
+  teacher_assistant:
+    name: EfficientCNN
+   
+
+
+  student:
+    name: CNN
+
+device:
+  cuda: true
+
+results:
+  directory: results/PTBXL
