@@ -1,1 +1,64 @@
 
+dataset:
+  name: Chapman
+  root: data/chapman
+  train_dir: data/chapman/train
+  valid_dir: data/chapman/valid
+  test_dir: data/chapman/test
+
+  dataset: chapman
+
+num_classes: 4
+
+classes:
+
+* SR
+* SB
+* GSVT
+* AFIB
+
+model:
+  image_size: 300
+
+  teachers:
+    mobilenet:
+      enabled: true
+      path: weights/mobilenet_teacher.pt
+
+    resnet_senet:
+      enabled: true
+      path: weights/resnet18_senet_teacher.pt
+
+    teacher_assistant:
+      enabled: true
+      path: weights/teacher_assistant.pt
+
+
+  student:
+    name: CNN
+    path: weights/student.pt
+
+training:
+  epochs: 65
+  batch_size: 128
+
+  optimizer:
+    name: AdamW
+    lr: 0.0004
+    weight_decay: 0.00001
+
+  scheduler:
+    name: ReduceLROnPlateau
+    factor: 0.85
+    patience: 3
+
+knowledge_distillation:
+
+  temperature: 2.0
+
+  alpha: 0.7
+
+  beta: 0.2
+
+device:
+  cuda: true
