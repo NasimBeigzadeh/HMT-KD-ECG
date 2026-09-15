@@ -214,6 +214,32 @@ Therefore, HMT-KD achieves:
 - Approximately **110× parameter reduction**
 - More than **99% reduction in model complexity**
 
+## Citation
+
+If you use this implementation in your research, please cite:
+
+**Nasim Beigzadeh and Abdolhossein Fathi.**
+
+*HMT-KD: Lightweight deep learning model for ECG analysis using hierarchical multi-teacher knowledge distillation framework.*
+
+**Applied Soft Computing, 2026.**
+
+DOI: [10.1016/j.asoc.2026.115038](https://doi.org/10.1016/j.asoc.2026.115038)
+
+### BibTeX
+
+```bibtex
+@article{beigzadeh2026hmtkd,
+  title   = {HMT-KD: Lightweight deep learning model for ECG analysis using hierarchical multi-teacher knowledge distillation framework},
+  author  = {Beigzadeh, Nasim and Fathi, Abdolhossein},
+  journal = {Applied Soft Computing},
+  year    = {2026},
+  doi     = {10.1016/j.asoc.2026.115038}
+}
+```
+
+  
+
 while maintaining comparable diagnostic performance.
 
 These results confirm that the proposed HMT-KD framework provides an effective solution for lightweight, accurate, and real-time ECG classification in resource-constrained healthcare applications.
