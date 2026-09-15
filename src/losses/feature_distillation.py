@@ -29,27 +29,28 @@ class FeatureHookManager:
         teacher_layers,
         student_layers
     ):
+        # Store intermediate feature maps extracted from TA and Student.
 
         self.teacher_features = {}
         self.student_features = {}
         self.hooks = []
 
-
+# Each Teacher layer must have a corresponding Student layer.
         assert len(teacher_layers) == len(student_layers), \
             "Teacher and student feature layers must have the same length"
 
-
+# Register a hook for each corresponding Teacher-Student layer pair.
         for t_layer, s_layer in zip(
             teacher_layers,
             student_layers
         ):
-
+# Extract and store the intermediate feature map from the TA.
             self._register_hook(
                 teacher_model,
                 t_layer,
                 self.teacher_features
             )
-
+# Extract and store the corresponding feature map from the Student.
             self._register_hook(
                 student_model,
                 s_layer,
@@ -59,13 +60,15 @@ class FeatureHookManager:
 
 
     def _get_layer(self, model, layer_name):
+        """ Find a specific layer in the model using its module name. """ 
+        # Search through all named modules in the network.
 
         for name, layer in model.named_modules():
 
             if name == layer_name:
                 return layer
 
-
+# Raise an error if the requested layer does not exist.
         raise ValueError(
             f"Layer {layer_name} not found in model"
         )
@@ -79,6 +82,9 @@ class FeatureHookManager:
         feature_storage
     ):
 
+        """ Register a forward hook on a selected layer. The hook captures the layer output during the forward pass and stores it for feature-based knowledge distillation. """ 
+        # Retrieve the target layer from the model.
+
         layer = self._get_layer(
             model,
             layer_name
@@ -86,15 +92,15 @@ class FeatureHookManager:
 
 
         def hook_function(module, input, output):
-
+# Store the intermediate feature representation.
             feature_storage[layer_name] = output
 
-
+# Register the hook to capture the layer output automatically.
 
         hook = layer.register_forward_hook(
             hook_function
         )
-
+# Save the hook reference so it can be removed after training.
         self.hooks.append(hook)
 
 
@@ -127,6 +133,7 @@ def align_feature_maps(
     student_feature,
     teacher_feature
 ):
+    
     """
     Align spatial and channel dimensions
     between student and teacher features.
@@ -145,7 +152,9 @@ def align_feature_maps(
         )
 
 
-    # Align channel dimension
+# Align the number of channels if the two feature maps # have different channel dimensions. # 
+# In the current HMT-KD architecture, the selected # Teacher and Student layers have matching channel dimensions, 
+# so this projection is normally not required.
 
     if student_feature.shape[1] != teacher_feature.shape[1]:
 
