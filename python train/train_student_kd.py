@@ -235,7 +235,8 @@ def train_one_epoch(
 
 
 
-            # Ensemble teacher knowledge
+           # Combine the response logits of the two primary teachers
+            # using weights determined from their validation performance.
 
             combined_teacher = weighted_teacher_outputs(
 
@@ -260,7 +261,8 @@ def train_one_epoch(
 
 
 
-            # Feature KD
+            # Match intermediate representations between the Teacher Assistant
+             # and the Student to transfer hierarchical feature knowledge.
 
             feature_loss = feature_distillation_loss(
 
